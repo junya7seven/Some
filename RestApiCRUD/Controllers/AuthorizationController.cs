@@ -93,7 +93,7 @@ namespace RestApiCRUD.Controllers
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user == null)
             {
-                _logger.LogInformation($"Invalid login or email - {model.Username}");
+                _logger.LogInformation($"Invalid login - {model.Username}");
                 return Unauthorized();
             }
             if (await _userManager.IsLockedOutAsync(user))
@@ -284,8 +284,5 @@ namespace RestApiCRUD.Controllers
             if (!result.Succeeded) return false;
             return true;
         }
-
-
-
     }
 }
