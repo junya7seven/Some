@@ -1,0 +1,156 @@
+﻿
+@page "/village"
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Village</PageTitle>
+
+<h1>Village</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (villageModel == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="header-container">
+        <h2 class="chooseDisplay" @onclick='() => Display("warrior")'>Warrior</h2>
+        <h2 class="chooseDisplay" @onclick='() => Display("enrollment")'>Enrollment</h2>
+        <h2 class="chooseDisplay" @onclick='() => Display("quest")'>Quest</h2>
+    </div>
+    @if(display == "warrior")
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th @onclick='() => Sort("Id")'>Id</th>
+                    <th @onclick='() => Sort("UserName")'>UserName</th>
+                    <th @onclick='() => Sort("NickName")'>NickName</th>
+                    <th @onclick='() => Sort("EnrollmentDate")'>EnrollmentDate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var warrior in villageModel.Warriors)
+                {
+                    <tr>
+                        <td>@warrior.WarriorId</td>
+                        <td>@warrior.FirstName</td>
+                        <td>@warrior.NickName</td>
+                        <td>@warrior.EnrollmentDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if(display == "enrollment")
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>QuestId</th>
+                    <th>WarriorId</th>
+                    <th>Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var enrollment in villageModel.Enrollments)
+                {
+                    <tr>
+                        <td>@enrollment.EnrollmentId</td>
+                        <td>@enrollment.QuestId</td>
+                        <td>@enrollment.WarriorId</td>
+                        <td>@enrollment.Level</td>
+                        <td>Open enrollments</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (display == "quest")
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Description</th>
+                    <th>Reward</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var quest in villageModel.Quests)
+                {
+                    <tr>
+                        <td>@quest.QuestId</td>
+                        <td>@quest.Description</td>
+                        <td>@quest.Reward</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+   
+}
+
+@code {
+
+    [Inject]
+    private VillageContext _context { get; set; } = default;
+    private VillageModel? villageModel;
+    private string display = "warrior";
+    private string currentSortColumn = "WarriorId";
+    private bool ascending = true;
+    protected override async Task OnInitializedAsync()
+    {
+        villageModel = await GetAllModels();
+    }
+    public async Task<VillageModel> GetAllModels()
+    {
+
+        return new VillageModel
+            {
+                Enrollments = _context.Enrollments.ToList(),
+                Warriors = _context.Warriors.ToList(),
+                Quests = _context.Quests.ToList()
+            };
+    }
+    private void Display(string currentDisplay)
+    {
+        display = currentDisplay;
+    }
+    private void Sort(string column)
+    {
+        if(currentSortColumn == column)
+        {
+            ascending = !ascending;
+        }
+        switch (column)
+        {
+            case "Id":
+                
+            case "FirstName":
+                villageModel.Warriors = ascending
+                    ? villageModel.Warriors.OrderBy(w => w.FirstName).ToList()
+                    : villageModel.Warriors.OrderByDescending(w => w.FirstName).ToList();
+                    ascending = !ascending;
+                break;
+            case "UserName":
+                villageModel.Warriors = ascending
+                    ? villageModel.Warriors.OrderBy(w => w.NickName).ToList()
+                    : villageModel.Warriors.OrderByDescending(w => w.NickName).ToList();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public class VillageModel
+    {
+        public IEnumerable<Enrollment> Enrollments { get; set; }
+        public IEnumerable<Warrior> Warriors { get; set; }
+        public IEnumerable<Quest> Quests { get; set; }
+    }
+}

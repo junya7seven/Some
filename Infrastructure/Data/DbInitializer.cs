@@ -14,7 +14,7 @@ namespace Infrastructure.Data
     {
         public static void Init(VillageContext context)
         {
-            if (!context.Warriors.Any())
+            if (context.Warriors.Any())
             {
                 return;
             }
