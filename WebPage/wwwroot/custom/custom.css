@@ -16,3 +16,14 @@ h2 {
     color: dodgerblue;
 }
 
+.columnName {
+    cursor: pointer; 
+}
+
+.columnName:hover {
+    color: lightgray; 
+}
+
+.columnName:active {
+    color: dodgerblue; 
+}

@@ -25,10 +25,10 @@ else
         <table class="table">
             <thead>
                 <tr>
-                    <th @onclick='() => Sort("Id")'>Id</th>
-                    <th @onclick='() => Sort("UserName")'>UserName</th>
-                    <th @onclick='() => Sort("NickName")'>NickName</th>
-                    <th @onclick='() => Sort("EnrollmentDate")'>EnrollmentDate</th>
+                    <th class="columnName" @onclick='() => Sort("Id")'>Id</th>
+                    <th class="columnName" @onclick='() => Sort("FirstName")'>FirstName</th>
+                    <th class="columnName" @onclick='() => Sort("NickName")'>NickName</th>
+                    <th class="columnName" @onclick='() => Sort("EnrollmentDate")'>EnrollmentDate</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,7 +38,7 @@ else
                         <td>@warrior.WarriorId</td>
                         <td>@warrior.FirstName</td>
                         <td>@warrior.NickName</td>
-                        <td>@warrior.EnrollmentDate</td>
+                        <td>@warrior.Enrollments.FirstOrDefault(x => x.WarriorId == warrior.WarriorId)</td>
                     </tr>
                 }
             </tbody>
@@ -91,7 +91,6 @@ else
             </tbody>
         </table>
     }
-   
 }
 
 @code {
@@ -129,17 +128,28 @@ else
         switch (column)
         {
             case "Id":
-                
+                villageModel.Warriors = ascending
+                    ? villageModel.Warriors.OrderBy(w => w.WarriorId).ToList()
+                    : villageModel.Warriors.OrderByDescending(w => w.WarriorId).ToList();
+                ascending = !ascending;
+                break;
             case "FirstName":
                 villageModel.Warriors = ascending
                     ? villageModel.Warriors.OrderBy(w => w.FirstName).ToList()
                     : villageModel.Warriors.OrderByDescending(w => w.FirstName).ToList();
                     ascending = !ascending;
                 break;
-            case "UserName":
+            case "NickName":
                 villageModel.Warriors = ascending
                     ? villageModel.Warriors.OrderBy(w => w.NickName).ToList()
                     : villageModel.Warriors.OrderByDescending(w => w.NickName).ToList();
+                ascending = !ascending;
+                break;
+            case "EnrollmentDate":
+                villageModel.Warriors = ascending
+                    ? villageModel.Warriors.OrderBy(w => w.EnrollmentDate).ToList()
+                    : villageModel.Warriors.OrderByDescending(w => w.EnrollmentDate).ToList();
+                ascending = !ascending;
                 break;
 
             default:
